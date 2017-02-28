@@ -1,5 +1,8 @@
 package com.kaplan.pdma.hittherat;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -25,6 +28,46 @@ public class MainActivity extends AppCompatActivity {
         gridLayout.setColumnCount(3);
 
         final TextView textViewScore = (TextView) findViewById(R.id.textView);
+        final TextView textViewTime = (TextView) findViewById(R.id.textViewTime);
+
+        final int timeRemaining = 10;
+        final CountDownTimer countDownTimer = new CountDownTimer(timeRemaining * 1000, 1000) {
+            @Override
+            public void onTick(long l) {
+                textViewTime.setText("" + (l / 1000));
+            }
+
+            @Override
+            public void onFinish() {
+                textViewTime.setText("Time's up!");
+
+                //https://developer.android.com/guide/topics/ui/dialogs.html
+                // 1. Instantiate an AlertDialog.Builder with its constructor
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+                // 2. Chain together various setter methods to set the dialog characteristics
+                builder.setMessage("" + score)
+                        .setTitle("Score");
+
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked OK button
+                        //score = 0;
+                        textViewScore.setText("Game Over");
+                    }
+                });
+
+                builder.setCancelable(false);
+
+                // 3. Get the AlertDialog from create()
+                AlertDialog dialog = builder.create();
+
+                dialog.show();
+
+            }
+        };
+        countDownTimer.start();
+
 
         array = new ImageView[9];
         array[0] = (ImageView) findViewById(R.id.imageView);
@@ -38,13 +81,13 @@ public class MainActivity extends AppCompatActivity {
         array[8] = (ImageView) findViewById(R.id.imageView9);
 
 
-        for(int i = 0; i < 9; i++) {
+        for (int i = 0; i < 9; i++) {
             array[i].setTag(1);
             array[i].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     int tag = (int) ((ImageView) view).getTag();
-                    if(tag == 2) {
+                    if (tag == 2) {
                         ((ImageView) view).setImageResource(R.drawable.rathole);
                         ((ImageView) view).setTag(1);
                         score++;
